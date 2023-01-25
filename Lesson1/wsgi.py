@@ -22,12 +22,12 @@ def get_films():
 @app.route('/hello')
 def index():
     films = get_films()
-    return render_template('hello.html', films=films, title='Hello')
+    return render_template('hello.html.jinja2', films=films, title='Hello')
 
 
 @app.route('/about')
 def about():
-    return render_template('about.html', title='About')
+    return render_template('about.html.jinja2', title='About')
 
 
 @app.route('/<string:name>')
@@ -36,4 +36,4 @@ def greeting(name: str):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5003)
