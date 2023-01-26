@@ -1,4 +1,4 @@
-from src import app
+from Lesson2.src import app
 
 if __name__ == '__main__':
     app.run(port=5002)
