@@ -2,10 +2,10 @@ from datetime import datetime
 
 from flask_restful import Resource
 from flask import request
+from Lesson2.src.schemas import FilmShema, ActorShema
+from marshmallow import ValidationError
 
-
-# from Lesson2.src import db
-# from Lesson2.src.models import Film
+from Lesson2.src.models import Film
 
 
 class Smoke(Resource):
@@ -14,59 +14,43 @@ class Smoke(Resource):
 
 
 class FilmListApi(Resource):
+    film_schema = FilmShema()
+
     def get(self, uuid=None):
         from Lesson2.src import db
         from Lesson2.src.models import Film
         if not uuid:
             films = db.session.query(Film).all()
-            return [f.to_dict() for f in films], 200
+            return self.film_schema.dump(films, many=True), 200
         film = db.session.query(Film).filter_by(uuid=uuid).first()
         if not film:
             return '', 404
-        return film.to_dict(), 200
+        return self.film_schema.dump(film, many=True), 200
 
     def post(self):
         from Lesson2.src import db
-        from Lesson2.src.models import Film
-        film_json = request.json
-        if not film_json:
-            return {'message': 'Wrong data'}, 400
         try:
-            film = Film(
-                title=film_json['title'],
-                release_date=datetime.strptime(film_json['release_date'], '%B %d, %Y'),
-                distributed_by=film_json['distributed_by'],
-                description=film_json.get('description'),
-                length=film_json.get('length'),
-                rating=film_json.get('rating')
-            )
-            db.session.add(film)
-            db.session.commit()
-        except (ValueError, KeyError):
-            return {'message': 'Wrong data'}, 400
-        return {'message': 'Create successfuly'}, 201
+            film = self.film_schema.load(request.json, session=db.session)
+        except ValidationError as e:
+            return {'message': str(e)}, 400
+        db.session.add(film)
+        db.session.commit()
+        return self.film_schema.dump(film), 201
 
     def put(self, uuid):
         from Lesson2.src import db
         from Lesson2.src.models import Film
-        film_json = request.json
-        if not film_json:
-            return {'message': 'Wrong data'}, 400
+
+        film = db.session.query(Film).filter_by(uuid=uuid).first()
+        if not film:
+            return '', 404
         try:
-            db.session.query(Film).filter_by(uuid=uuid).update(
-                dict(
-                    title=film_json['title'],
-                    release_date=datetime.strptime(film_json['release_date'], '%B %d, %Y'),
-                    distributed_by=film_json['distributed_by'],
-                    description=film_json.get('description'),
-                    length=film_json.get('length'),
-                    rating=film_json.get('rating')
-                )
-            )
-            db.session.commit()
-        except (ValueError, KeyError):
-            return {'message': 'Wrong data'}, 400
-        return {'message': 'Updated successfuly'}, 200
+            film = self.film_schema.load(request.json, instance=film, session=db.session)
+        except ValidationError as e:
+            return {'message': str(e)}, 400
+        db.session.add(film)
+        db.session.commit()
+        return self.film_schema.dump(film), 200
 
     def patch(self, uuid):
         from Lesson2.src import db
@@ -75,6 +59,30 @@ class FilmListApi(Resource):
         if not film:
             return '', 404
         film_json = request.json
+
+        # title = film_json.get('title')
+        # release_date = datetime.strptime(film_json.get('release_date'), '%B %d %Y') if film_json.get('release_date') else None
+        # distributed_by = film_json.get('distributed_by')
+        # description = film_json.get('description')
+        # length = film_json.get('length')
+        # rating = film_json.get('rating')
+        # if title:
+        #     film.title = title
+        # elif release_date:
+        #     film.release_date = release_date
+        # elif distributed_by:
+        #     film.distributed_by = distributed_by
+        # elif description:
+        #     film.description = description
+        # elif length:
+        #     film.length = length
+        # elif rating:
+        #     film.rating = rating
+        #
+        # db.session.add(film)
+        # db.session.commit()
+        # return {'message': 'Updated successfuly'}, 200
+
         for key in film_json.keys():
             film[key] = film_json[key]
 
@@ -91,3 +99,17 @@ class FilmListApi(Resource):
         db.session.delete(film)
         db.session.commit()
         return '', 204
+
+
+class ActorListApi(Resource):
+    def get(self, uuid=None):
+        pass
+
+    def post(self):
+        pass
+
+    def put(self, uuid):
+        pass
+
+    def delete(self, uuid):
+        pass
