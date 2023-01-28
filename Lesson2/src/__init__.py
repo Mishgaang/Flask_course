@@ -4,17 +4,11 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 
-from Lesson2.src.routes import Smoke, FilmListApi
-
-
 app = Flask(__name__)
 app.config.from_object(config.Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 api = Api(app)
-
-api.add_resource(Smoke, '/smoke', strict_slashes=False)
-api.add_resource(FilmListApi, '/films', '/films/<uuid>', strict_slashes=False)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -30,4 +24,5 @@ def greeting():
     return render_template('greeting.html.jinja2', name=name)
 
 
-from Lesson2.src import models, routes
+from Lesson2.src import routes
+from Lesson2.src.database import models

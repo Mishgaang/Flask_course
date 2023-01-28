@@ -1,0 +1,16 @@
+from flask_restful import Resource
+from Lesson2.src.schemas.actors import ActorShema
+
+
+class ActorListApi(Resource):
+    def get(self, uuid=None):
+        pass
+
+    def post(self):
+        pass
+
+    def put(self, uuid):
+        pass
+
+    def delete(self, uuid):
+        pass
