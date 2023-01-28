@@ -1,11 +1,10 @@
-from datetime import datetime
-
 from flask_restful import Resource
 from flask import request
 from Lesson2.src.schemas import FilmShema, ActorShema
 from marshmallow import ValidationError
 
 from Lesson2.src.models import Film
+from Lesson2.src import db
 
 
 class Smoke(Resource):
@@ -17,8 +16,6 @@ class FilmListApi(Resource):
     film_schema = FilmShema()
 
     def get(self, uuid=None):
-        from Lesson2.src import db
-        from Lesson2.src.models import Film
         if not uuid:
             films = db.session.query(Film).all()
             return self.film_schema.dump(films, many=True), 200
@@ -28,7 +25,6 @@ class FilmListApi(Resource):
         return self.film_schema.dump(film, many=True), 200
 
     def post(self):
-        from Lesson2.src import db
         try:
             film = self.film_schema.load(request.json, session=db.session)
         except ValidationError as e:
@@ -38,9 +34,6 @@ class FilmListApi(Resource):
         return self.film_schema.dump(film), 201
 
     def put(self, uuid):
-        from Lesson2.src import db
-        from Lesson2.src.models import Film
-
         film = db.session.query(Film).filter_by(uuid=uuid).first()
         if not film:
             return '', 404
@@ -53,8 +46,6 @@ class FilmListApi(Resource):
         return self.film_schema.dump(film), 200
 
     def patch(self, uuid):
-        from Lesson2.src import db
-        from Lesson2.src.models import Film
         film = db.session.query(Film).filter_by(uuid=uuid).first()
         if not film:
             return '', 404
@@ -91,8 +82,6 @@ class FilmListApi(Resource):
         return {'message': 'Updated successfuly'}, 200
 
     def delete(self, uuid):
-        from Lesson2.src import db
-        from Lesson2.src.models import Film
         film = db.session.query(Film).filter_by(uuid=uuid).first()
         if not film:
             return '', 404
