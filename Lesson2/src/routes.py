@@ -1,8 +1,10 @@
 from Lesson2.src import api
 from Lesson2.src.resources.actors import ActorListApi
+from Lesson2.src.resources.aggregations import AggregationApi
 from Lesson2.src.resources.films import FilmListApi
 from Lesson2.src.resources.smoke import Smoke
 
 api.add_resource(Smoke, '/smoke', strict_slashes=False)
 api.add_resource(FilmListApi, '/films', '/films/<uuid>', strict_slashes=False)
 api.add_resource(ActorListApi, '/actors', '/actors/<uuid>', strict_slashes=False)
+api.add_resource(AggregationApi, '/aggregations', strict_slashes=False)

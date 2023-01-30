@@ -1,10 +1,13 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow_sqlalchemy.fields import Nested
 
 from Lesson2.src.database.models import Film
 
 
-class FilmShema(SQLAlchemyAutoSchema):
+class FilmSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Film
         exclude = ['id']
         load_instance = True
+        include_fk = True
+    actors = Nested('ActorSchema', many=True, exclude=('films',))

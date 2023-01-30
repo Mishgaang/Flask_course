@@ -2,23 +2,26 @@ from flask import request
 
 from flask_restful import Resource
 from marshmallow import ValidationError
+from sqlalchemy.orm import joinedload
 
 from Lesson2.src import db
 from Lesson2.src.database.models import Film
-from Lesson2.src.schemas.films import FilmShema
+from Lesson2.src.schemas.films import FilmSchema
 
 
 class FilmListApi(Resource):
-    film_schema = FilmShema()
+    film_schema = FilmSchema()
 
     def get(self, uuid=None):
         if not uuid:
-            films = db.session.query(Film).all()
+            films = db.session.query(Film).options(
+                joinedload(Film.actors)
+            ).all()
             return self.film_schema.dump(films, many=True), 200
         film = db.session.query(Film).filter_by(uuid=uuid).first()
         if not film:
             return '', 404
-        return self.film_schema.dump(film, many=True), 200
+        return self.film_schema.dump(film), 200
 
     def post(self):
         try:

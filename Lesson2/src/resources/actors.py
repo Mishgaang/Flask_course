@@ -1,8 +1,10 @@
 from flask_restful import Resource
-from Lesson2.src.schemas.actors import ActorShema
+from Lesson2.src.schemas.actors import ActorSchema
 
 
 class ActorListApi(Resource):
+    actor_schema = ActorSchema()
+
     def get(self, uuid=None):
         pass
 
