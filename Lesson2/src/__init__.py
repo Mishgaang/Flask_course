@@ -28,7 +28,7 @@ def greeting():
 from Lesson2.src import routes
 from Lesson2.src.database import models
 
-# app.debug = True
+app.debug = True
 
 
 # def sql_debug(response):

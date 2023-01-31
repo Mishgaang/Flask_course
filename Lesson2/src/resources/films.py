@@ -6,12 +6,13 @@ from sqlalchemy.orm import joinedload
 
 from Lesson2.src import db
 from Lesson2.src.database.models import Film
+from Lesson2.src.resources.auth import token_required
 from Lesson2.src.schemas.films import FilmSchema
 
 
 class FilmListApi(Resource):
     film_schema = FilmSchema()
-
+    @token_required
     def get(self, uuid=None):
         if not uuid:
             films = db.session.query(Film).options(
