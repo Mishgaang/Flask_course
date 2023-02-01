@@ -1,0 +1,14 @@
+language: python
+python:
+  - '3.10'
+
+before_install:
+  - pip install pycodestyle
+
+install:
+  - pip install requirements.txt
+
+script:
+  - pytest
+  - coverage run --sourse='src/' -m pytest
+  - pycodestyle src/ --ignore=E722, E501, E402
